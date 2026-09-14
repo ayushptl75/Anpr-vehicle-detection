@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANPR Desktop Access Control</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- Header Navigation & Live Metrics -->
+    <header class="app-header">
+        <div class="brand-title">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="2" y="5" width="20" height="14" rx="2" />
+                <line x1="2" y1="10" x2="22" y2="10" />
+            </svg>
+            ANPR Access Control System
+        </div>
+        
+        <div class="header-metrics">
+            <span id="entry-gate-status" class="gate-indicator gate-closed">● ENTRY GATE: CLOSED</span>
+            <span id="exit-gate-status" class="gate-indicator gate-closed">● EXIT GATE: CLOSED</span>
+
+            <div class="metric-pill">
+                <span>Vehicles Inside:</span>
+                <span class="metric-val" id="count-vehicles-inside">0</span>
+            </div>
+
+            <div class="metric-pill">
+                <span id="live-clock">--:--:--</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Dashboard Grid -->
+    <main class="dashboard-grid">
+        
+        <!-- Left Column: Dual Live Camera Stream Feeds -->
+        <section class="card">
+            <div class="card-title">
+                <span>Dual Live Cameras</span>
+                <span style="font-size:0.8rem; color:var(--text-muted);">Real-time Video Feeds</span>
+            </div>
+
+            <!-- Entry Camera Feed -->
+            <div style="margin-bottom:1.5rem;">
+                <div class="camera-feed-box">
+                    <div class="camera-badge">
+                        <span class="live-dot"></span>
+                        ENTRY CAMERA 1
+                    </div>
+                    <img src="/video_feed/entry" alt="Live Entry Camera Feed" id="entry-feed">
+                </div>
+                <div style="display:flex; justify-between: space-between; align-items:center;">
+                    <button class="btn btn-primary" onclick="triggerEntryScan()" style="width:100%;">
+                        ⚡ Scan & Process Entry Camera
+                    </button>
+                </div>
+            </div>
+
+            <!-- Exit Camera Feed -->
+            <div>
+                <div class="camera-feed-box">
+                    <div class="camera-badge">
+                        <span class="live-dot"></span>
+                        EXIT CAMERA 2
+                    </div>
+                    <img src="/video_feed/exit" alt="Live Exit Camera Feed" id="exit-feed">
+                </div>
+                <div>
+                    <button class="btn btn-primary" onclick="triggerExitScan()" style="width:100%;">
+                        ⚡ Scan & Process Exit Camera
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Right Column: Control Panel & Data Management -->
+        <section class="card">
+            <!-- Navigation Tabs -->
+            <nav class="tab-nav">
+                <button class="tab-btn active" data-tab="tab-live-events">Live Events</button>
+                <button class="tab-btn" data-tab="tab-registered">Registered Vehicles</button>
+                <button class="tab-btn" data-tab="tab-day-logs">Today's Logs</button>
+            </nav>
+
+            <!-- Tab 1: Live Event Decision Card & Recent Logs -->
+            <div id="tab-live-events" class="tab-pane" style="display:block;">
+                
+                <h4 style="margin-bottom:0.75rem; font-size:0.9rem; color:var(--text-muted);">LATEST ACCESS DECISION</h4>
+                
+                <div class="event-decision-box">
+                    <img id="decision-plate-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='70' viewBox='0 0 120 70'%3E%3Crect width='120' height='70' fill='%230f172a'/%3E%3Ctext x='50%25' y='50%25' fill='%2364748b' font-size='12' text-anchor='middle' dy='.3em'%3ENo Capture%3C/text%3E%3C/svg%3E" class="event-plate-img" alt="Captured Plate Crop">
+                    
+                    <div class="event-details">
+                        <div id="decision-plate-text" class="plate-text-display">WAITING...</div>
+                        <div id="decision-owner-name" style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">Select or scan frame</div>
+                        <span id="decision-badge" class="gate-indicator gate-closed">NO SCAN YET</span>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom:0.75rem; font-size:0.9rem; color:var(--text-muted); margin-top:1.5rem;">RECENT ACCESS ACTIVITY</h4>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Log ID</th>
+                                <th>Plate Number</th>
+                                <th>Entry Time</th>
+                                <th>Exit Time</th>
+                                <th>Gate Decision</th>
+                                <th>Crop</th>
+                            </tr>
+                        </thead>
+                        <tbody id="access-logs-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 2: Registered Vehicles Management -->
+            <div id="tab-registered" class="tab-pane" style="display:none;">
+                <h4 style="margin-bottom:0.75rem; font-size:0.9rem; color:var(--text-muted);">REGISTER NEW VEHICLE</h4>
+                
+                <form id="add-vehicle-form" style="display:grid; grid-template-columns:1fr 1fr 1fr auto; gap:0.75rem; align-items:end; margin-bottom:1.5rem;">
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label">Plate Number</label>
+                        <input type="text" id="reg-plate" class="form-input" placeholder="e.g. KA01AB1234" required style="text-transform:uppercase;">
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label">Owner Name</label>
+                        <input type="text" id="reg-owner" class="form-input" placeholder="Owner Full Name" required>
+                    </div>
+                    <div class="form-group" style="margin:0;">
+                        <label class="form-label">Vehicle Type</label>
+                        <select id="reg-type" class="form-input">
+                            <option value="Car">Car</option>
+                            <option value="Bike">Bike</option>
+                            <option value="SUV">SUV</option>
+                            <option value="Truck">Truck</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">+ Register</button>
+                </form>
+
+                <h4 style="margin-bottom:0.75rem; font-size:0.9rem; color:var(--text-muted);">REGISTERED VEHICLE DATABASE</h4>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Plate Number</th>
+                                <th>Owner Name</th>
+                                <th>Type</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registered-vehicles-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Tab 3: Today's Full Day Records -->
+            <div id="tab-day-logs" class="tab-pane" style="display:none;">
+                <h4 style="margin-bottom:0.75rem; font-size:0.9rem; color:var(--text-muted);">TODAY'S COMPLETE VEHICLE ACCESS LOGS</h4>
+                <div class="table-container" style="max-height:500px;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Plate Number</th>
+                                <th>Entry Time</th>
+                                <th>Exit Time</th>
+                                <th>Status</th>
+                                <th>Gate Decision</th>
+                            </tr>
+                        </thead>
+                        <tbody id="day-logs-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

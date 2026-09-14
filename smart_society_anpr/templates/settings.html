@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% set active_page = 'settings' %}
+
+{% block title %}Settings - Smart Society Security Gate{% endblock %}
+{% block page_heading %}System & Gate Settings{% endblock %}
+
+{% block content %}
+<div class="data-card" style="max-width:700px;">
+    <h3 style="margin-bottom:1.5rem; border-bottom:1px solid var(--card-border); padding-bottom:0.75rem;">Camera & ANPR Configuration</h3>
+
+    <div style="display:flex; flex-direction:column; gap:1.25rem;">
+        <div>
+            <label style="display:block; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">ENTRY CAMERA URL / SOURCE</label>
+            <input type="text" value="{{ entry_camera_url }}" readonly style="width:100%; padding:0.6rem 1rem; background:var(--bg-dark); border:1px solid var(--card-border); color:var(--primary); font-weight:600; border-radius:6px;">
+        </div>
+
+        <div>
+            <label style="display:block; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">EXIT CAMERA URL / SOURCE</label>
+            <input type="text" value="{{ exit_camera_url }}" readonly style="width:100%; padding:0.6rem 1rem; background:var(--bg-dark); border:1px solid var(--card-border); color:var(--primary); font-weight:600; border-radius:6px;">
+        </div>
+
+        <div>
+            <label style="display:block; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">MINIMUM OCR CONFIDENCE THRESHOLD</label>
+            <input type="text" value="{{ (min_ocr_confidence * 100)|int }}%" readonly style="width:100%; padding:0.6rem 1rem; background:var(--bg-dark); border:1px solid var(--card-border); color:var(--text-main); font-weight:600; border-radius:6px;">
+        </div>
+
+        <div>
+            <label style="display:block; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">SOFTWARE GATE OPEN HOLD DURATION</label>
+            <input type="text" value="5 Seconds" readonly style="width:100%; padding:0.6rem 1rem; background:var(--bg-dark); border:1px solid var(--card-border); color:var(--text-main); font-weight:600; border-radius:6px;">
+        </div>
+
+        <div>
+            <label style="display:block; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.4rem;">DUPLICATE EVENT COOLDOWN</label>
+            <input type="text" value="30 Seconds" readonly style="width:100%; padding:0.6rem 1rem; background:var(--bg-dark); border:1px solid var(--card-border); color:var(--text-main); font-weight:600; border-radius:6px;">
+        </div>
+    </div>
+</div>
+{% endblock %}

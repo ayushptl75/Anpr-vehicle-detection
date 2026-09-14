@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Smart Society ANPR{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-title">🛡️ Smart Security Gate</div>
+        <ul class="nav-menu">
+            <li><a href="/" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">📊 Dashboard</a></li>
+            <li><a href="/live-entry" class="nav-link {% if active_page == 'entry' %}active{% endif %}">📷 Live Entry</a></li>
+            <li><a href="/live-exit" class="nav-link {% if active_page == 'exit' %}active{% endif %}">📷 Live Exit</a></li>
+            <li><a href="/vehicles" class="nav-link {% if active_page == 'vehicles' %}active{% endif %}">🚘 Registered Vehicles</a></li>
+            <li><a href="/records" class="nav-link {% if active_page == 'records' %}active{% endif %}">📋 Gate Records</a></li>
+            <li><a href="/reports" class="nav-link {% if active_page == 'reports' %}active{% endif %}">📈 Reports</a></li>
+            <li><a href="/settings" class="nav-link {% if active_page == 'settings' %}active{% endif %}">⚙️ Settings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="main-wrapper">
+        <header class="top-bar">
+            <h2>{% block page_heading %}Security Dashboard{% endblock %}</h2>
+            <div>Status: <span class="badge badge-success">● SYSTEM ONLINE</span></div>
+        </header>
+
+        <main class="content-body">
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

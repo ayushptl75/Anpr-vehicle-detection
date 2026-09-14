@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% set active_page = 'entry' %}
+
+{% block title %}Live Entry Gate - Smart Society Security Gate{% endblock %}
+{% block page_heading %}ENTRY GATE{% endblock %}
+
+{% block content %}
+<div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
+    <!-- LIVE CAMERA PLAYER -->
+    <div class="data-card" style="margin-bottom:0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
+            <h3>[ LIVE CAMERA ]</h3>
+            <span class="badge badge-success">● LIVE STREAMING</span>
+        </div>
+        <div style="background:#000; border-radius:12px; overflow:hidden; aspect-ratio:16/9; border:1px solid var(--card-border); box-shadow:0 8px 30px rgba(0,0,0,0.5);">
+            <img src="/video_feed/entry" alt="Live Entry Camera Feed" style="width:100%; height:100%; object-fit:contain; display:block;">
+        </div>
+    </div>
+
+    <!-- LIVE RECOGNITION STATUS PANEL -->
+    <div class="data-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
+        <h3 style="margin-bottom:1.5rem; border-bottom:1px solid var(--card-border); padding-bottom:0.75rem;">Gate Live Status</h3>
+        
+        <div style="margin-bottom:1.25rem;">
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Detected Plate</div>
+            <div style="font-size:1.5rem; font-weight:700; color:var(--primary); letter-spacing:1px;" id="entry-plate">SCANNING...</div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">OCR Confidence</div>
+            <div style="font-size:1.25rem; font-weight:600; color:var(--text-main);" id="entry-confidence">---</div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Registration Status</div>
+            <div><span class="badge badge-secondary" id="entry-reg-status">WAITING</span></div>
+        </div>
+
+        <div style="margin-bottom:1.25rem;">
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Access Decision</div>
+            <div><span class="badge badge-secondary" id="entry-access-decision">PENDING</span></div>
+        </div>
+
+        <div>
+            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Gate Status</div>
+            <div><span class="badge badge-danger" style="font-size:0.9rem;" id="entry-gate-status">GATE CLOSED</span></div>
+        </div>
+    </div>
+</div>
+{% endblock %}

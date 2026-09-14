@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% set active_page = 'dashboard' %}
+
+{% block title %}Dashboard - Smart Society Security Gate{% endblock %}
+{% block page_heading %}Security Operations Dashboard{% endblock %}
+
+{% block content %}
+<!-- 4 Summary Cards -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-label">Vehicles Inside</span>
+        <span class="stat-value">{{ vehicles_inside }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Today's Entries</span>
+        <span class="stat-value">{{ todays_entries }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Today's Exits</span>
+        <span class="stat-value">{{ todays_exits }}</span>
+    </div>
+    <div class="stat-card">
+        <span class="stat-label">Denied Attempts</span>
+        <span class="stat-value" style="color:var(--red);">{{ denied_attempts }}</span>
+    </div>
+</div>
+
+<!-- Recent Activity Table -->
+<div class="data-card">
+    <h3>Recent Activity</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Plate</th>
+                <th>Event</th>
+                <th>Time</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if recent_activity %}
+                {% for item in recent_activity %}
+                <tr>
+                    <td style="font-weight:700; color:var(--primary);">{{ item.plate_number }}</td>
+                    <td>
+                        {% if item.event_type == 'ENTRY' %}
+                            <span class="badge badge-success">ENTRY</span>
+                        {% else %}
+                            <span class="badge" style="background:rgba(99, 102, 241, 0.15); color:var(--primary-indigo); border:1px solid rgba(99, 102, 241, 0.3);">EXIT</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ item.event_date }} {{ item.event_time }}</td>
+                    <td>
+                        {% if item.access_status == 'ALLOWED' %}
+                            <span class="badge badge-success">ALLOWED</span>
+                        {% else %}
+                            <span class="badge badge-danger">DENIED</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="4" style="text-align:center; color:var(--text-muted);">No recent activity logged yet.</td>
+                </tr>
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
