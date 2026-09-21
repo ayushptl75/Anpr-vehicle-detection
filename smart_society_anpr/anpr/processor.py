@@ -109,10 +109,12 @@ class ANPRProcessor:
         # 5. Software Gate Decision & Cooldown Update
         if is_allowed:
             gate_controller.trigger_entry_gate_opening()
-            self.entry_cooldowns[clean_plate] = time.time()
         else:
             with gate_controller.lock:
                 gate_controller.entry_gate_status = "CLOSED"
+
+        # Always update cooldown for processed plate to prevent duplicate event spamming
+        self.entry_cooldowns[clean_plate] = time.time()
 
         res_dict = {
             "success": True,
@@ -212,10 +214,12 @@ class ANPRProcessor:
         # 5. Software Gate Decision & Cooldown Update
         if is_allowed:
             gate_controller.trigger_exit_gate_opening()
-            self.exit_cooldowns[clean_plate] = time.time()
         else:
             with gate_controller.lock:
                 gate_controller.exit_gate_status = "CLOSED"
+
+        # Always update cooldown for processed plate to prevent duplicate exit event spamming
+        self.exit_cooldowns[clean_plate] = time.time()
 
         res_dict = {
             "success": True,

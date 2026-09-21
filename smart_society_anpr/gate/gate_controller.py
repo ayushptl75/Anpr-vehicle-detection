@@ -2,6 +2,7 @@ import time
 import threading
 from datetime import datetime
 from database.database import get_vehicle_by_plate, normalize_plate
+from gate.hardware_controller import hardware_controller
 
 class GateController:
     def __init__(self, gate_open_duration_sec=5.0):
@@ -10,6 +11,7 @@ class GateController:
         self.gate_open_duration_sec = gate_open_duration_sec
         self.last_entry_decision = None
         self.last_exit_decision = None
+        self.hardware_controller = hardware_controller
         self.lock = threading.Lock()
 
     def evaluate_access(self, plate_number: str):
@@ -44,26 +46,30 @@ class GateController:
             }
 
     def trigger_entry_gate_opening(self):
-        """Opens entry software gate and starts auto-close timer thread."""
+        """Opens entry software gate & sends hardware OPEN signal, starting auto-close timer thread."""
         with self.lock:
             self.entry_gate_status = "OPEN"
+        self.hardware_controller.send_open_signal()
 
         def auto_close():
             time.sleep(self.gate_open_duration_sec)
             with self.lock:
                 self.entry_gate_status = "CLOSED"
+            self.hardware_controller.send_close_signal()
 
         threading.Thread(target=auto_close, daemon=True).start()
 
     def trigger_exit_gate_opening(self):
-        """Opens exit software gate and starts auto-close timer thread."""
+        """Opens exit software gate & sends hardware OPEN signal, starting auto-close timer thread."""
         with self.lock:
             self.exit_gate_status = "OPEN"
+        self.hardware_controller.send_open_signal()
 
         def auto_close():
             time.sleep(self.gate_open_duration_sec)
             with self.lock:
                 self.exit_gate_status = "CLOSED"
+            self.hardware_controller.send_close_signal()
 
         threading.Thread(target=auto_close, daemon=True).start()
 
@@ -71,9 +77,10 @@ class GateController:
         """
         Processes plate for gate authorization decision.
         CRITICAL RULE: Only plates with temporal status == 'CONFIRMED' can reach access decision.
-        Never use a single OCR frame for authorization.
+        Never use a single OCR frame for authorization or hardware opening.
         """
         if not temporal_result or temporal_result.get("status") != "CONFIRMED":
+            self.hardware_controller.send_denied_signal()
             return {
                 "authorized": False,
                 "reason": "Plate not yet CONFIRMED by multi-frame recognition",
@@ -101,6 +108,7 @@ class GateController:
             else:
                 with self.lock:
                     self.entry_gate_status = "CLOSED"
+                self.hardware_controller.send_denied_signal()
                 decision_result["gate_status"] = "CLOSED"
             self.last_entry_decision = decision_result
         else:
@@ -110,6 +118,7 @@ class GateController:
             else:
                 with self.lock:
                     self.exit_gate_status = "CLOSED"
+                self.hardware_controller.send_denied_signal()
                 decision_result["gate_status"] = "CLOSED"
             self.last_exit_decision = decision_result
 

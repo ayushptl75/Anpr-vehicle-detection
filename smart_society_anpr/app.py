@@ -69,7 +69,10 @@ def get_gate_status():
         "entry_gate_status": gate_controller.entry_gate_status,
         "exit_gate_status": gate_controller.exit_gate_status,
         "last_entry": gate_controller.last_entry_decision,
-        "last_exit": gate_controller.last_exit_decision
+        "last_exit": gate_controller.last_exit_decision,
+        "entry_camera_status": entry_camera.get_status_dict(),
+        "exit_camera_status": exit_camera.get_status_dict(),
+        "hardware_status": gate_controller.hardware_controller.get_status_dict()
     })
 
 @app.route('/live-entry')

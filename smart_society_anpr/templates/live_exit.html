@@ -1,16 +1,16 @@
 {% extends 'base.html' %}
 {% set active_page = 'exit' %}
 
-{% block title %}Live Exit Gate - Smart Society Security Gate{% endblock %}
-{% block page_heading %}EXIT GATE{% endblock %}
+{% block title %}Live Exit Camera - Smart Society Security Gate{% endblock %}
+{% block page_heading %}LIVE EXIT CAMERA{% endblock %}
 
 {% block content %}
 <div style="display:grid; grid-template-columns: 2fr 1fr; gap:1.5rem;">
     <!-- LIVE CAMERA PLAYER -->
     <div class="data-card" style="margin-bottom:0;">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem;">
-            <h3>[ LIVE CAMERA ]</h3>
-            <span class="badge badge-success">● LIVE STREAMING</span>
+            <h3>[ LIVE CAMERA PREVIEW ]</h3>
+            <span class="badge badge-success" id="exit-cam-badge">● CONNECTED</span>
         </div>
         <div style="background:#000; border-radius:12px; overflow:hidden; aspect-ratio:16/9; border:1px solid var(--card-border); box-shadow:0 8px 30px rgba(0,0,0,0.5);">
             <img src="/video_feed/exit" alt="Live Exit Camera Feed" style="width:100%; height:100%; object-fit:contain; display:block;">
@@ -19,31 +19,41 @@
 
     <!-- LIVE RECOGNITION STATUS PANEL -->
     <div class="data-card" style="margin-bottom:0; display:flex; flex-direction:column; justify-content:center;">
-        <h3 style="margin-bottom:1.5rem; border-bottom:1px solid var(--card-border); padding-bottom:0.75rem;">Gate Live Status</h3>
+        <h3 style="margin-bottom:1.25rem; border-bottom:1px solid var(--card-border); padding-bottom:0.75rem;">Gate Live Status</h3>
         
-        <div style="margin-bottom:1.25rem;">
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Detected Plate</div>
-            <div style="font-size:1.5rem; font-weight:700; color:var(--primary); letter-spacing:1px;" id="exit-plate">SCANNING...</div>
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">Camera Status</div>
+            <div><span class="badge badge-success" id="exit-cam-status">CONNECTED</span></div>
         </div>
 
-        <div style="margin-bottom:1.25rem;">
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">OCR Confidence</div>
-            <div style="font-size:1.25rem; font-weight:600; color:var(--text-main);" id="exit-confidence">---</div>
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">Vehicle Detection</div>
+            <div><span class="badge badge-secondary" id="exit-vehicle-status">NOT DETECTED</span></div>
         </div>
 
-        <div style="margin-bottom:1.25rem;">
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Registration Status</div>
-            <div><span class="badge badge-secondary" id="exit-reg-status">WAITING</span></div>
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">License Plate</div>
+            <div style="font-size:1.4rem; font-weight:700; color:var(--primary); letter-spacing:1px;" id="exit-plate">Searching...</div>
         </div>
 
-        <div style="margin-bottom:1.25rem;">
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Access Decision</div>
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">OCR Confidence</div>
+            <div style="font-size:1.15rem; font-weight:600; color:var(--text-main);" id="exit-confidence">---</div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">Registration Status</div>
+            <div><span class="badge badge-secondary" id="exit-reg-status">NOT REGISTERED</span></div>
+        </div>
+
+        <div style="margin-bottom:1rem;">
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">Access Decision</div>
             <div><span class="badge badge-secondary" id="exit-access-decision">PENDING</span></div>
         </div>
 
         <div>
-            <div style="font-size:0.85rem; color:var(--text-muted); margin-bottom:0.25rem;">Gate Status</div>
-            <div><span class="badge badge-danger" style="font-size:0.9rem;" id="exit-gate-status">GATE CLOSED</span></div>
+            <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:0.2rem;">Gate Status</div>
+            <div><span class="badge badge-danger" style="font-size:0.9rem;" id="exit-gate-status">CLOSED</span></div>
         </div>
     </div>
 </div>
